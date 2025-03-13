@@ -72,3 +72,8 @@ Contributions are welcome! Open a **Pull Request** or submit an **Issue**.
 ---  
 
 🔥 **Secure your data, automate your backups, and sleep peacefully!** 😎  
+
+
+--- 
+
+# Documentation
