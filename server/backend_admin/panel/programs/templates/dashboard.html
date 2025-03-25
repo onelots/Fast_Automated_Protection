@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Fast Automated Protection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>F.A.P.</h2>
+                <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="{{ url_for('dashboard') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+                                <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+                                <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+                                <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('clients') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span>Clients</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('reports') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <path d="M14 2v6h6"></path>
+                                <path d="M16 13H8"></path>
+                                <path d="M16 17H8"></path>
+                                <path d="M10 9H8"></path>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('settings') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('storage') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 5c0-1.1-.9-2-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5Z"></path>
+                                <path d="M2 10h20"></path>
+                            </svg>
+                            <span>Storage</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}" class="logout-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="mobile-sidebar-toggle">
+                    <button id="mobile-sidebar-toggle" aria-label="Open sidebar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="header-title">
+                    <h1>Backup Dashboard</h1>
+                </div>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <span class="user-name">{{ user_name }}</span>
+                        <span class="user-email">{{ user_email }}</span>
+                    </div>
+                    <div class="user-avatar">
+                        <div class="avatar-placeholder">
+                            {{ user_name[0] }}
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Stats Cards -->
+                <section class="stats-section">
+                    <div class="stats-card">
+                        <div class="stats-icon backup-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                                <path d="M12 12v9"></path>
+                                <path d="m16 16-4-4-4 4"></path>
+                            </svg>
+                        </div>
+                        <div class="stats-info">
+                            <h3>Total Backups</h3>
+                            <p class="stats-value">{{ data.stats.total_backups }}</p>
+                        </div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon storage-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 5c0-1.1-.9-2-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5Z"></path>
+                                <path d="M2 10h20"></path>
+                            </svg>
+                        </div>
+                        <div class="stats-info">
+                            <h3>Storage Used</h3>
+                            <p class="stats-value">{{ data.stats.storage_used }}</p>
+                        </div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon devices-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stats-info">
+                            <h3>Active Clients</h3>
+                            <p class="stats-value">{{ data.stats.active_clients }}</p>
+                        </div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon time-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stats-info">
+                            <h3>Last Backup</h3>
+                            <p class="stats-value time-value">{{ data.stats.last_backup }}</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Backup Status -->
+                <section class="protection-status-section">
+                    <div class="section-header">
+                        <h2>Backup Status</h2>
+                        <button class="btn btn-outline">Run Backup Now</button>
+                    </div>
+                    <div class="protection-grid">
+                        <div class="protection-card {% if data.backup_status.files == 'Up to date' %}active{% else %}warning{% endif %}">
+                            <div class="protection-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <path d="M14 2v6h6"></path>
+                                </svg>
+                            </div>
+                            <div class="protection-info">
+                                <h3>Files</h3>
+                                <p class="protection-status">{{ data.backup_status.files }}</p>
+                            </div>
+                        </div>
+                        <div class="protection-card {% if data.backup_status.folders == 'Up to date' %}active{% else %}warning{% endif %}">
+                            <div class="protection-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                                </svg>
+                            </div>
+                            <div class="protection-info">
+                                <h3>Folders</h3>
+                                <p class="protection-status">{{ data.backup_status.folders }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts and Recent Backups -->
+                <div class="flex-row">
+                    <!-- Charts -->
+                    <section class="charts-section">
+                        <div class="section-header">
+                            <h2>Backup Analytics</h2>
+                        </div>
+                        <div class="charts-container">
+                            <div class="chart-card">
+                                <h3>Weekly Backups</h3>
+                                <div class="chart-container">
+                                    <canvas id="weeklyBackupsChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-card">
+                                <h3>Backup Distribution by Type</h3>
+                                <div class="chart-container">
+                                    <canvas id="backupDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Recent Backups -->
+                    <section class="recent-threats-section">
+                        <div class="section-header">
+                            <h2>Recent Backups</h2>
+                            <a href="{{ url_for('reports') }}" class="view-all">View All</a>
+                        </div>
+                        <div class="threats-list">
+                            {% for backup in data.backups %}
+                            <div class="threat-item">
+                                <div class="threat-icon severity-{{ backup.status.lower() }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                                        <path d="M12 12v9"></path>
+                                        <path d="m16 16-4-4-4 4"></path>
+                                    </svg>
+                                </div>
+                                <div class="threat-info">
+                                    <div class="threat-header">
+                                        <h4>{{ backup.type }}</h4>
+                                        <span class="threat-status status-{{ backup.status.lower() }}">{{ backup.status }}</span>
+                                    </div>
+                                    <p class="threat-source">Size: {{ backup.size }}</p>
+                                    <p class="threat-date">{{ backup.date }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Activity Log -->
+                <section class="activity-section">
+                    <div class="section-header">
+                        <h2>Backup Activity Log</h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="activity-list">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Date</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activity in data.activities %}
+                                <tr>
+                                    <td>{{ activity.type }}</td>
+                                    <td>{{ activity.date }}</td>
+                                    <td>{{ activity.details }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

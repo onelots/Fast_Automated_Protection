@@ -1,0 +1,318 @@
+/* Reports Page Specific Styles */
+
+/* Report Filters */
+.report-filters {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) auto;
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+.filter-actions .btn svg {
+    margin-right: 0.5rem;
+}
+
+/* Report Summary */
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-card {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+}
+
+.summary-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--primary);
+}
+
+.success-icon {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.failed-icon {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--destructive);
+}
+
+.storage-icon {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.summary-info h3 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.summary-percentage {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+/* Report Charts */
+.report-charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.chart-card {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.chart-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.chart-container {
+    height: 300px;
+}
+
+/* Report Table */
+.report-table-container {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.section-header h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th {
+    text-align: left;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    border-bottom: 1px solid var(--border);
+}
+
+.report-table td {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.report-table tr:last-child td {
+    border-bottom: none;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-completed {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.status-failed {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--destructive);
+}
+
+.status-inprogress {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--info);
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.btn-icon:hover {
+    color: var(--foreground);
+    background-color: var(--secondary);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: var(--secondary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pagination-page {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.pagination-page:hover:not(.active) {
+    background-color: var(--secondary);
+}
+
+.pagination-page.active {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+}
+
+.pagination-ellipsis {
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted-foreground);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .report-filters {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .report-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .report-charts {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .report-filters {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .filter-actions .btn {
+        width: 100%;
+    }
+    
+    .report-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
