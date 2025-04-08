@@ -1,9 +1,5 @@
-# Initial dummy code for the panel, using python Alpine image
-
 FROM python:3.12
-COPY programs/ /app
+COPY templates/ /app
 WORKDIR /app
 RUN pip install -r requirements.txt
-EXPOSE 80
-
-# End of file
+EXPOSE 5010

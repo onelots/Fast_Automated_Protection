@@ -1,1 +1,17 @@
 .DS_Store
+
+*__pycache__/*
+*/__pycache__/*
+*/.ipynb_checkpoints/*
+*/.vscode/*
+*/.pytest
+*.idea/
+*.venv/
+*/.idea/*
+*/.mypy_cache/*
+*/.pytest_cache/*
+*/.coverage
+*/.coverage.*
+
+*/.venv/
+server/backend_admin/panel/programs/__pycache__/

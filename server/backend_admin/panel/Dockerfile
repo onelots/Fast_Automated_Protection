@@ -1,9 +1,7 @@
-# Initial dummy code for the panel, using python Alpine image
-
 FROM python:3.12
-COPY programs/ /app
 WORKDIR /app
-RUN pip install -r requirements.txt
-EXPOSE 80
-
-# End of file
+COPY . /app
+COPY requirements.txt /app
+RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 8000
+CMD ["python","-u", "programs/main.py"]

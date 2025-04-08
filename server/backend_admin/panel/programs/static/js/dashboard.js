@@ -1,26 +1,21 @@
-/**
- * Dashboard specific JavaScript
- */
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Dashboard sidebar toggle
+
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const mobileSidebarToggle = document.getElementById('mobile-sidebar-toggle');
     const sidebar = document.querySelector('.sidebar');
-    
+
     if (sidebarToggle && sidebar) {
       sidebarToggle.addEventListener('click', function() {
         sidebar.classList.toggle('collapsed');
       });
     }
-    
+
     if (mobileSidebarToggle && sidebar) {
       mobileSidebarToggle.addEventListener('click', function() {
         sidebar.classList.toggle('mobile-open');
       });
     }
-    
-    // Close sidebar when clicking outside on mobile
+
     document.addEventListener('click', function(event) {
       if (sidebar && sidebar.classList.contains('mobile-open')) {
         if (!sidebar.contains(event.target) && event.target !== mobileSidebarToggle) {
@@ -28,24 +23,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     });
-    
-    // Initialize charts if on dashboard page
+
     initializeCharts();
   });
-  
-  /**
-   * Initialize dashboard charts
-   */
+
   function initializeCharts() {
     const weeklyBackupsCanvas = document.getElementById('weeklyBackupsChart');
     const backupDistributionCanvas = document.getElementById('backupDistributionChart');
-    
+
     if (weeklyBackupsCanvas && backupDistributionCanvas) {
-      // Fetch chart data
+
       fetch('/api/chart-data')
         .then(response => response.json())
         .then(data => {
-          // Weekly backups chart
+
           new Chart(weeklyBackupsCanvas, {
             type: 'line',
             data: {
@@ -88,8 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
               }
             }
           });
-          
-          // Backup distribution chart
+
           new Chart(backupDistributionCanvas, {
             type: 'doughnut',
             data: {
@@ -97,11 +87,11 @@ document.addEventListener('DOMContentLoaded', function() {
               datasets: [{
                 data: data.distribution.data,
                 backgroundColor: [
-                  '#8b5cf6', // Primary (Files)
-                  '#ef4444', // Destructive (Databases)
-                  '#f59e0b', // Warning (Media)
-                  '#3b82f6', // Info (System)
-                  '#10b981'  // Success (Other)
+                  '#8b5cf6',
+                  '#ef4444',
+                  '#f59e0b',
+                  '#3b82f6',
+                  '#10b981'
                 ],
                 borderWidth: 1,
                 borderColor: '#27272a'
