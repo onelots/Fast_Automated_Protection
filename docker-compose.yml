@@ -7,11 +7,27 @@ networks:
       config:
         - subnet: 192.168.100.0/24
 
+  clients_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.0.0/24
+
+  wireguard:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.0.0/29
+        - subnet: fdcc:ad94:bacf:61a3::/64
+          
+
 services:
-  database:
+  database_admin:
     build: 
       context: backend_admin/database
-      dockerfile: backend_admin/database/Dockerfile
+      dockerfile: Dockerfile
     container_name: postgres_admin_database
     environment:
       POSTGRES_USER: postgres
@@ -26,41 +42,87 @@ services:
       - "5432:5432"
     restart: always
 
-  app:
+  panel_admin:
     build:
       context: backend_admin/panel
-      dockerfile: backend_admin/panel/Dockerfile
+      dockerfile: Dockerfile
     container_name: panel_admin
     environment:
       DATABASE_URL: postgresql://postgres:postgres@database:5432/admin_database
-      PYTHONUNBUFFERED: 1
+      PYTHONUNBUFFERED: 1 # This is for development purposes... I'll remove it later
     networks:
       admin_network:
         ipv4_address: 192.168.100.2
     depends_on:
-      - database
+      - database_admin
     ports:
       - "8000:8000"
     restart: always
     stdin_open: true
 
-  user_test:
+  containers_handler:
     build:
-      context: backend_client/panel
-      dockerfile: backend_client/panel/Dockerfile
-    container_name: panel_client_1
+      context: docker_handler/
+      dockerfile: Dockerfile
+    container_name: docker_handler
     environment:
-      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgresql://postgres:postgres@database_admin:5432/postgres
+      PYTHONUNBUFFERED: 1 # This is for development purposes... I'll remove it later
     networks:
       admin_network:
-        ipv4_address: 192.168.100.4
-    ports:
-      - "8001:8000"
+        - ipv4_address: 192.168.100.4
     depends_on:
-      - database
-      - app
-    restart: always
+        - database_admin
+        - panel_admin
     stdin_open: true
+
+
+# --------------------------------------
+# ------- Our Wireguard Server ---------
+# --------------------------------------
+
+  internal_wireguard:
+    image: ghcr.io/wg-easy/wg-easy:15
+    container_name: internal_wireguard
+    networks:
+      admin_network:
+        ipv4_address: 192.168.0.5
+      wireguard:
+        - ipv4_address: 10.0.0.2
+    volumes:
+      - etc_wireguard:/etc/wireguard
+      - /lib/modules:/lib/modules:ro
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.default.forwarding=1
+
+
+# --------------------------------------
+# ---- Our Nginx Reverse Proxy ---------
+# --------------------------------------
+
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
 
 volumes:
   postgres_data:
