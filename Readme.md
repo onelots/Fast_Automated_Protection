@@ -17,6 +17,10 @@ Il nous reste donc une partie à couvrir, les SAUVERGARDES.
 
 Le script RUN, selon le temps qu'aura défini l'utilisateur, se lance.
 
+- nouveau client = nouvelle stack docker bdd / panel 
+- api clients ou admins 
+- séparation des backends (admin pas atteignable)
+
 
 ## Architecture réseau
 
@@ -31,11 +35,16 @@ Ci-dessous l'infrastructure que nous avons imaginée pour mener à bien le proje
 
 ## options
 
-A développer
+
 
 ## Backend Admin
 
-A développer
+Dans le backend admin on retrouve :
+    - Une base de données générale, qui va checker si le mot de passe admin du client est identique à celui renseigner et qui contient également la liste des clients et les "stats" des clients (capacitée de stockage autorisée).
+
+    - Le fichier docker.sock qui sert à allumer des dockers
+
+    - Le pannel d'aministration qui est utilisé par les administrateurs systèmes l'ensemble des clients et s'assurer que tout fonctionne correctement. 
 
 ## Notification
 
