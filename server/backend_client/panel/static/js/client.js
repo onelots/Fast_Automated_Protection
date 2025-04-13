@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+
     const notification = document.getElementById('notification');
     const notificationMessage = document.querySelector('.notification-message');
     const notificationClose = document.querySelector('.notification-close');
@@ -179,3 +180,19 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotification(decodeURIComponent(message), type || 'info');
     }
 });
+
+    document.getElementById("logout-btn").addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+        const response = await fetch("/api/v1/logout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include"
+        });
+        if (response.ok) {
+            window.location.href = "login.html";
+        }
+    } catch (error) {
+        console.error("Erreur lors de la déconnexion:", error);
+    }
+    });

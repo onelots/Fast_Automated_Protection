@@ -23,4 +23,11 @@ CREATE TABLE IF NOT EXISTS user_list (
     last_backup TIMESTAMP,
     storage_used INTEGER,
     storage_total INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS user_details (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    password VARCHAR(70) NOT NULL
 )

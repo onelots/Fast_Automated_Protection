@@ -10,7 +10,7 @@ networks:
 services:
   database:
     build: 
-      context: database
+      context: ./backend_admin/database
       dockerfile: Dockerfile
     container_name: postgres_admin_database
     environment:
@@ -28,7 +28,7 @@ services:
 
   app:
     build:
-      context: ./panel
+      context: ./backend_admin/panel
       dockerfile: Dockerfile
     container_name: panel_admin
     environment:
@@ -41,6 +41,24 @@ services:
       - database
     ports:
       - "8000:8000"
+    restart: always
+    stdin_open: true
+
+  user_test:
+    build:
+      context: ./backend_client/panel
+      dockerfile: Dockerfile
+    container_name: panel_client_1
+    environment:
+      PYTHONUNBUFFERED: 1
+    networks:
+      admin_network:
+        ipv4_address: 192.168.100.4
+    ports:
+      - "8001:8000"
+    depends_on:
+      - database
+      - app
     restart: always
     stdin_open: true
 

@@ -1,74 +1,22 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
-import json
+import requests
 import random
 import threading
-import os
 
-app = Flask(__name__)
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
-import json
-import random
-import threading
-import os
-
-app = Flask(__name__)
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
-import json
-import random
-import threading
-import os
-
-app = Flask(__name__)
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
-import json
-import random
-import threading
-import os
-
-app = Flask(__name__)
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
-import json
-import random
-import threading
-import os
-
-app = Flask(__name__)
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
-import json
-import random
-import threading
-import os
+users = requests.get('http://app:8000/api/v1/client_list').json()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'votre_clé_secrète_ici'
 app.permanent_session_lifetime = timedelta(days=7)
 
-users = {
-    1: {
-        'id': 1,
-        'username': 'John Doe',
-        'email': 'john@example.com',
-        'password': generate_password_hash('password123'),
-        'os': 'Windows 10',
-        'status': 'Active',
-        'storage_used': 32.5,
-        'storage_total': 50,
-        'created_at': (datetime.utcnow() - timedelta(days=30)).isoformat(),
-        'last_login': (datetime.utcnow() - timedelta(days=1)).isoformat()
-    }
-}
+def check_user(email, password):
+    checking = requests.post('http://app:8000/api/v1/check_user', auth=(email, password))
+    if checking.status_code == 200:
+        return True
+    else:
+        return False
 
 backups = {}
 backup_id_counter = 1
@@ -220,7 +168,10 @@ create_test_data()
 
 @app.route('/')
 def index():
-    return redirect(url_for('login'))
+    if 'user_id' in session:
+        return redirect(url_for('client_dashboard'))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/login.html')
 def login():
@@ -239,188 +190,26 @@ def api_login():
     password = data.get('password')
     remember_me = data.get('remember_me', False)
 
-    user_id = None
-    for uid, user in users.items():
-        if user['email'] == email:
-            user_id = uid
-            break
-
-    if user_id is None or not check_password_hash(users[user_id]['password'], password):
-        return jsonify({'error': 'Identifiants incorrects'}), 401
-
-    session.permanent = remember_me
-    session['user_id'] = user_id
-    session['username'] = users[user_id]['username']
-    session['email'] = users[user_id]['email']
-
-    users[user_id]['last_login'] = datetime.utcnow().isoformat()
-
-    global activity_id_counter
-    activities[activity_id_counter] = {
-        'id': activity_id_counter,
-        'user_id': user_id,
-        'date': datetime.utcnow().isoformat(),
-        'action': 'Login',
-        'details': f'Connexion depuis {request.remote_addr}'
-    }
-    activity_id_counter += 1
-
-    return jsonify({'success': True, 'message': 'Connexion réussie'})
-
-@app.route('/api/v1/register', methods=['POST'])
-def api_register():
-    data = request.json
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
-    os = data.get('os')
-
-    for user in users.values():
-        if user['email'] == email:
-            return jsonify({'error': 'Cet email est déjà utilisé'}), 400
-
-    global activity_id_counter
-    new_user_id = max(users.keys()) + 1 if users else 1
-
-    users[new_user_id] = {
-        'id': new_user_id,
-        'username': username,
-        'email': email,
-        'password': generate_password_hash(password),
-        'os': os,
-        'status': 'Pending',
-        'storage_used': 0,
-        'storage_total': 50,
-        'created_at': datetime.utcnow().isoformat(),
-        'last_login': None
-    }
-
-    activities[activity_id_counter] = {
-        'id': activity_id_counter,
-        'user_id': new_user_id,
-        'date': datetime.utcnow().isoformat(),
-        'action': 'Register',
-        'details': f'Inscription depuis {request.remote_addr}'
-    }
-    activity_id_counter += 1
-
-    return jsonify({
-        'success': True,
-        'message': 'Inscription réussie. Votre compte est en attente d\'activation.',
-        'user_id': new_user_id
-    })
+    verification = check_user(email, password)
+    if not verification:
+        return jsonify({'error': 'Email ou mot de passe incorrect'}), 401
+    else:
+        session['user_id'] = email
+        session.permanent = remember_me
+        return jsonify({'success': True, 'message': 'Connexion réussie'})
 
 @app.route('/api/v1/logout', methods=['POST'])
 def api_logout():
     if 'user_id' in session:
-
-        global activity_id_counter
-        activities[activity_id_counter] = {
-            'id': activity_id_counter,
-            'user_id': session['user_id'],
-            'date': datetime.utcnow().isoformat(),
-            'action': 'Logout',
-            'details': f'Déconnexion depuis {request.remote_addr}'
-        }
-        activity_id_counter += 1
-
-        session.clear()
-
-    return jsonify({'success': True, 'message': 'Déconnexion réussie'})
-
-@app.route('/api/v1/user', methods=['GET'])
-def api_get_user():
-    if 'user_id' not in session:
+        session.pop('user_id', None)
+        return jsonify({'success': True, 'message': 'Déconnexion réussie'})
+    else:
         return jsonify({'error': 'Non autorisé'}), 401
 
-    user_id = session['user_id']
-    if user_id not in users:
-        return jsonify({'error': 'Utilisateur non trouvé'}), 404
-
-    user = users[user_id]
-    return jsonify({
-        'id': user['id'],
-        'username': user['username'],
-        'email': user['email'],
-        'os': user['os'],
-        'status': user['status'],
-        'storage_used': user['storage_used'],
-        'storage_total': user['storage_total'],
-        'created_at': user['created_at'],
-        'last_login': user['last_login']
-    })
-
-@app.route('/api/v1/user', methods=['PUT'])
-def api_update_user():
-    if 'user_id' not in session:
-        return jsonify({'error': 'Non autorisé'}), 401
-
-    user_id = session['user_id']
-    if user_id not in users:
-        return jsonify({'error': 'Utilisateur non trouvé'}), 404
-
-    data = request.json
-
-    if 'username' in data:
-        users[user_id]['username'] = data['username']
-
-    if 'os' in data:
-        users[user_id]['os'] = data['os']
-
-    global activity_id_counter
-    activities[activity_id_counter] = {
-        'id': activity_id_counter,
-        'user_id': user_id,
-        'date': datetime.utcnow().isoformat(),
-        'action': 'UpdateProfile',
-        'details': 'Mise à jour du profil'
-    }
-    activity_id_counter += 1
-
-    return jsonify({
-        'success': True,
-        'message': 'Profil mis à jour avec succès',
-        'user': users[user_id]
-    })
-
-@app.route('/api/v1/user/password', methods=['PUT'])
-def api_update_password():
-    if 'user_id' not in session:
-        return jsonify({'error': 'Non autorisé'}), 401
-
-    user_id = session['user_id']
-    if user_id not in users:
-        return jsonify({'error': 'Utilisateur non trouvé'}), 404
-
-    data = request.json
-    current_password = data.get('current_password')
-    new_password = data.get('new_password')
-
-    if not current_password or not new_password:
-        return jsonify({'error': 'Mot de passe actuel et nouveau mot de passe requis'}), 400
-
-    if not check_password_hash(users[user_id]['password'], current_password):
-        return jsonify({'error': 'Mot de passe actuel incorrect'}), 400
-
-    users[user_id]['password'] = generate_password_hash(new_password)
-
-    global activity_id_counter
-    activities[activity_id_counter] = {
-        'id': activity_id_counter,
-        'user_id': user_id,
-        'date': datetime.utcnow().isoformat(),
-        'action': 'ChangePassword',
-        'details': 'Changement de mot de passe'
-    }
-    activity_id_counter += 1
-
-    return jsonify({
-        'success': True,
-        'message': 'Mot de passe mis à jour avec succès'
-    })
 
 @app.route('/api/v1/storage', methods=['GET'])
 def api_get_storage():
+
     if 'user_id' not in session:
         return jsonify({'error': 'Non autorisé'}), 401
 
@@ -711,5 +500,7 @@ def api_get_activity():
 
     return jsonify(user_activities)
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5010)
+def run_app():
+    app.run(debug=True, host='192.168.100.4', port=8001)
+
+run_app()

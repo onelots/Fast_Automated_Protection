@@ -1,5 +1,7 @@
 FROM python:3.12
-COPY templates/ /app
+COPY . /app
 WORKDIR /app
-RUN pip install -r requirements.txt
+COPY requirements.txt /app
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["python","-u", "app.py"]
 EXPOSE 5010

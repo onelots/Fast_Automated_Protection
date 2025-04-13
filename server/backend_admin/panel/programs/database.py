@@ -26,7 +26,7 @@ def insert_user(username, email, os, status, last_backup, storage_used, storage_
         return None
 
 
-def update_user(username, email, os, status, last_backup, storage_userd, storage_total):
+def update_user(username, email, os, status, last_backup, storage_used, storage_total):
     query = """
     UPDATE user_list
     SET username = %s, os = %s, status = %s, last_backup = %s, storage_used = %s, storage_total = %s
@@ -36,7 +36,7 @@ def update_user(username, email, os, status, last_backup, storage_userd, storage
     try:
         conn = connection_to_db()
         cur = conn.cursor()
-        cur.execute(query, (username, os, status, last_backup, storage_userd, storage_total, email))
+        cur.execute(query, (username, os, status, last_backup, storage_used, storage_total, email))
         conn.commit()
         cur.close()
         conn.close()
@@ -100,3 +100,39 @@ def delete_user(email):
         print("Error while deleting user :", e)
         return False
     return True
+
+def add_user_to_detailed_user_db(username, email, password):
+    query = """
+    INSERT INTO user_details (username, email, password)
+    VALUES (%s, %s, %s);
+    """
+
+    try:
+        conn = connection_to_db()
+        cur = conn.cursor()
+        cur.execute(query, (username, email, password))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print("Error while adding user to detailed user list :", e)
+        return False
+    return True
+
+def get_user_from_detailed_user_db(email):
+    query = """
+    SELECT username, email, password
+    FROM user_details
+    WHERE email = %s;
+    """
+    try:
+        conn = connection_to_db()
+        cur = conn.cursor()
+        cur.execute(query, (email,))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+        return user
+    except Exception as e:
+        print("Error while getting user from detailed user list :", e)
+        return None

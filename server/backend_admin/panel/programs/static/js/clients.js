@@ -232,6 +232,7 @@ if (deleteClientBtns.length > 0) {
                 const formData = {
                     username: document.getElementById('username').value,
                     email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
                     os: document.getElementById('os').value,
                     status: document.getElementById('status').value,
 

@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/clients.css') }}">
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+
+
 </head>
 <body class="dashboard-body">
     <div class="dashboard-container">
@@ -336,6 +339,10 @@
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label for="os">Operating System</label>
