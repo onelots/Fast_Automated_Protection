@@ -10,8 +10,8 @@ networks:
 services:
   database:
     build: 
-      context: ./backend_admin/database
-      dockerfile: Dockerfile
+      context: backend_admin/database
+      dockerfile: backend_admin/database/Dockerfile
     container_name: postgres_admin_database
     environment:
       POSTGRES_USER: postgres
@@ -28,8 +28,8 @@ services:
 
   app:
     build:
-      context: ./backend_admin/panel
-      dockerfile: Dockerfile
+      context: backend_admin/panel
+      dockerfile: backend_admin/panel/Dockerfile
     container_name: panel_admin
     environment:
       DATABASE_URL: postgresql://postgres:postgres@database:5432/admin_database
@@ -46,8 +46,8 @@ services:
 
   user_test:
     build:
-      context: ./backend_client/panel
-      dockerfile: Dockerfile
+      context: backend_client/panel
+      dockerfile: backend_client/panel/Dockerfile
     container_name: panel_client_1
     environment:
       PYTHONUNBUFFERED: 1

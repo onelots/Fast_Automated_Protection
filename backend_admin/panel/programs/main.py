@@ -206,14 +206,18 @@ def insert_user():
         if not data:
             return jsonify({"success": False, "error": "No JSON data provided"}), 400
 
+        # Get infos from form
         now = datetime.now()
         username = data.get('username')
         email = data.get('email')
         clear_password = data.get('password')
 
+        # Here we take care of password generation
         salt = bcrypt.gensalt()
         password_hash = bcrypt.hashpw(clear_password.encode('utf-8'), salt)
         print(f"Hash généré: {password_hash}")
+
+        # Insert into DB and know if everything went well
         user_detail = database.add_user_to_detailed_user_db(username, email, password_hash.decode('utf-8'))
 
 
