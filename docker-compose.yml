@@ -21,7 +21,7 @@ networks:
       config:
         - subnet: 10.0.0.0/29
         - subnet: fdcc:ad94:bacf:61a3::/64
-          
+
 
 services:
   database_admin:
@@ -68,6 +68,8 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@database_admin:5432/postgres
       PYTHONUNBUFFERED: 1 # This is for development purposes... I'll remove it later
+    volumes:
+      - backend_client:/backend_client
     networks:
       admin_network:
         - ipv4_address: 192.168.100.4
