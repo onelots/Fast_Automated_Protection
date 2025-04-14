@@ -1,27 +1,26 @@
-version: '3.8'
-
 networks:
   admin_network:
     ipam:
-      driver: default
       config:
         - subnet: 192.168.100.0/24
 
   clients_network:
+    driver: bridge
     ipam:
-      driver: default
       config:
-        - subnet: 10.0.0.0/24
+        - subnet: 192.168.10.0/24
 
   wireguard:
     driver: bridge
     enable_ipv6: true
     ipam:
-      driver: default
       config:
-        - subnet: 10.0.0.0/29
+        - subnet: 10.0.2.0/29
         - subnet: fdcc:ad94:bacf:61a3::/64
 
+# --------------------------------------
+# ------------ Our Services ------------
+#- --------------------------------------
 
 services:
   database_admin:
@@ -48,7 +47,7 @@ services:
       dockerfile: Dockerfile
     container_name: panel_admin
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@database:5432/admin_database
+      DATABASE_URL: postgresql://postgres:postgres@database_admin:5432/admin_database
       PYTHONUNBUFFERED: 1 # This is for development purposes... I'll remove it later
     networks:
       admin_network:
@@ -68,11 +67,13 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@database_admin:5432/postgres
       PYTHONUNBUFFERED: 1 # This is for development purposes... I'll remove it later
+      PATH: $PATH:/usr/local/bin
     volumes:
-      - backend_client:/backend_client
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend_client:/backend_client
     networks:
       admin_network:
-        - ipv4_address: 192.168.100.4
+        ipv4_address: 192.168.100.4
     depends_on:
         - database_admin
         - panel_admin
@@ -84,13 +85,13 @@ services:
 # --------------------------------------
 
   internal_wireguard:
-    image: ghcr.io/wg-easy/wg-easy:15
+    image: ghcr.io/wg-easy/wg-easy:latest
     container_name: internal_wireguard
     networks:
       admin_network:
-        ipv4_address: 192.168.0.5
+        ipv4_address: 192.168.100.5
       wireguard:
-        - ipv4_address: 10.0.0.2
+        ipv4_address: 10.0.2.2
     volumes:
       - etc_wireguard:/etc/wireguard
       - /lib/modules:/lib/modules:ro
@@ -98,6 +99,8 @@ services:
       - "51820:51820/udp"
       - "51821:51821/tcp"
     restart: unless-stopped
+    environment:
+      - WG_HOST=0.0.0.0
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -113,14 +116,16 @@ services:
 # ---- Our Nginx Reverse Proxy ---------
 # --------------------------------------
 
-  app:
+  nginx_proxy_manager:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
       - '80:80' # Public HTTP Port
       - '443:443' # Public HTTPS Port
       - '81:81' # Admin Web Port
-
+    networks:
+      clients_network:
+        ipv4_address: 192.168.10.2
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
@@ -128,3 +133,4 @@ services:
 
 volumes:
   postgres_data:
+  etc_wireguard:

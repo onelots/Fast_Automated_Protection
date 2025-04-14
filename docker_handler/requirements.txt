@@ -1,2 +1,4 @@
 fastapi==0.115.12
 docker==7.1.0
+uvicorn==0.34.1
+bcrypt==4.3.0

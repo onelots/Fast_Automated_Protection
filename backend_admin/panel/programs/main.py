@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
@@ -5,6 +7,7 @@ from datetime import datetime, timedelta
 import random
 import database
 import bcrypt
+import requests
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -233,14 +236,28 @@ def insert_user():
         existing_user = database.get_user_by_email(email)
         if existing_user:
             return jsonify({"success": False, "error": "User already exists"}), 400
-        user_id = database.insert_user(username, email, client_os, status, last_backup, storage_used, storage_total)
 
+        user_id = database.insert_user(username, email, client_os, status, last_backup, storage_used, storage_total)
+        form = {
+            "username": username,
+            "email": email,
+            "password": password_hash.decode('utf-8')
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+        user_docker_stack = requests.post("http://192.168.100.4:8000/create_new_client", data=json.dumps(form), headers=headers)
+        if user_docker_stack.status_code != 200:
+            return jsonify({"success": False, "error": user_docker_stack.text}), 400
         if user_id and user_detail:
             return jsonify({"id": user_id}), 201
         else:
             return jsonify({"success": False}), 500
 
         # We'll take care of backend part... generation of dockerfile and such (please kill me)
+        # edit : done above
     except Exception as e:
         print("Error while inserting user:", e)
         return jsonify({"success": False, "error": str(e)}), 500
@@ -296,36 +313,7 @@ def delete_user():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/v1/check_user', methods=['POST'])
-def check_user():
-    auth = request.authorization
-    if not auth or not auth.username or not auth.password:
-        return jsonify({"success": False, "error": "Missing credentials"}), 401
-
-    email = auth.username
-    password = auth.password
-
-    clients_list = database.get_user_from_detailed_user_db(email)
-    if not clients_list:
-        return jsonify({"success": False, "error": "User not found"}), 404
-    hashed_password = clients_list[2]
-    print(clients_list)
-    print(f"Hash récupéré: {hashed_password}")
-    print(f"Type du hash: {type(hashed_password)}")
-    try:
-        if isinstance(hashed_password, str):
-            if not hashed_password.startswith(('$2a$', '$2b$', '$2y$')):
-                raise ValueError("Format de hash invalide")
-            hashed_password = hashed_password.encode('utf-8')
-        if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
-            return jsonify({"success": False, "error": "Invalid password"}), 401
-
-    except ValueError as e:
-        print(f"Erreur de validation bcrypt: {str(e)}")
-        return jsonify({"success": False, "error": "Invalid password format"}), 500
-
-    return jsonify({"success": True}), 200
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='192.168.100.2', port=8000)
+

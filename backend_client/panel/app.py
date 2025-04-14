@@ -1,22 +1,28 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
-import requests
 import random
 import threading
+import bcrypt
 
-users = requests.get('http://app:8000/api/v1/client_list').json()
+with open("/app/infos.txt", "r") as f:
+    lines = [line.strip() for line in f.readlines()]
+    users = (lines[0], lines[1], lines[2])
+    print(users)
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'votre_clé_secrète_ici'
 app.permanent_session_lifetime = timedelta(days=7)
 
 def check_user(email, password):
-    checking = requests.post('http://app:8000/api/v1/check_user', auth=(email, password))
-    if checking.status_code == 200:
-        return True
+    if email == users[1]:
+        if bcrypt.checkpw(password.encode('utf-8'), users[2].encode("utf-8")):
+            return True
+        else:
+            return False
     else:
         return False
+
 
 backups = {}
 backup_id_counter = 1
@@ -38,7 +44,7 @@ schedules = {
 def create_test_data():
     global backup_id_counter, activity_id_counter
 
-    now = datetime.utcnow()
+    now = datetime.now()
 
     test_backups = [
         {
@@ -501,6 +507,6 @@ def api_get_activity():
     return jsonify(user_activities)
 
 def run_app():
-    app.run(debug=True, host='192.168.100.4', port=8001)
+    app.run(debug=True, port=8000)
 
 run_app()
