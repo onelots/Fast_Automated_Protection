@@ -8,7 +8,7 @@
     - A ce titre vous allez créer une infrastructure sécurisée de sauvegardes réseau.
 (P.R)
 
-## fonctionnement des sauvegardes
+## Fonctionnement des sauvegardes
 
 L'équipe technique attribue directement une URL au client, par exemple "http://client1.sauvegarde.fr" puis le client arrive directement sur sa page de connexion grâce au reverse proxy, qui, placé juste devant le serveur web, lui attribue une IP.  
 Depuis l'espace utilisateur, le client peut voir l'état de ses sauvegardes, le stockage restant et les différentes informations relatives à son compte. Dans une zone isolée de l'extérieur, on retrouve trois éléments :     
@@ -43,7 +43,7 @@ Ci-dessous l'infrastructure que nous avons imaginée pour mener à bien le proje
     - Git
     - Connaissances élémentaires en réseau
 
-## options
+## Options
 
 ## Backend Admin
 
